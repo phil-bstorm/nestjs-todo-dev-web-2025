@@ -5,6 +5,8 @@ import { TodoService } from './services/todo/todo.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TodoEntity } from './entities/todo.entity';
 import { UserEntity } from './entities/user.entity';
+import { AuthController } from './controllers/auth/auth.controller';
+import { UserService } from './services/user/user.service';
 
 @Module({
   imports: [
@@ -21,7 +23,7 @@ import { UserEntity } from './entities/user.entity';
     }),
     TypeOrmModule.forFeature([TodoEntity, UserEntity]),
   ],
-  controllers: [AppController, TodoController],
-  providers: [TodoService],
+  controllers: [AppController, TodoController, AuthController],
+  providers: [TodoService, UserService],
 })
 export class AppModule {}
