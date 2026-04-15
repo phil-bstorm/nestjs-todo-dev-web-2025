@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { TodoController } from './controllers/todo/todo.controller';
 import { TodoService } from './services/todo/todo.service';
@@ -9,6 +9,8 @@ import { AuthController } from './controllers/auth/auth.controller';
 import { UserService } from './services/user/user.service';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { LoggingMiddleware } from './middlewares/logging/logging.middleware';
+import { AuthMiddleware } from './middlewares/auth/auth.middleware';
 
 @Module({
   imports: [
@@ -33,4 +35,12 @@ import { JwtModule } from '@nestjs/jwt';
   controllers: [AppController, TodoController, AuthController],
   providers: [TodoService, UserService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggingMiddleware).forRoutes('*');
+    // si on veut l'appliquer sur des routes spécifiques
+    // ['auth/login', 'auth/register']
+
+    consumer.apply(AuthMiddleware).forRoutes('*');
+  }
+}
