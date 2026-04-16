@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { LoginFormDto } from 'src/dtos/auth.form.dto';
+import { UsernameAlreadyExists } from 'src/custom-exceptions/user.exception';
 
 @Injectable()
 export class UserService {
@@ -18,7 +19,7 @@ export class UserService {
     });
 
     if (existing) {
-      throw new Error('Username déjà utilisé');
+      throw new UsernameAlreadyExists(user.username);
     }
 
     user.password = bcrypt.hashSync(user.password, 10);
@@ -35,11 +36,11 @@ export class UserService {
     });
 
     if (!user) {
-      throw new Error('Credentials invalide');
+      throw new UnauthorizedException('Credentials invalide');
     }
 
     if (!bcrypt.compareSync(credentials.password, user.password)) {
-      throw new Error('Credentials invalide');
+      throw new UnauthorizedException('Credentials invalide');
     }
 
     return user;
