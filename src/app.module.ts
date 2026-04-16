@@ -11,6 +11,8 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { LoggingMiddleware } from './middlewares/logging/logging.middleware';
 import { AuthMiddleware } from './middlewares/auth/auth.middleware';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -31,6 +33,9 @@ import { AuthMiddleware } from './middlewares/auth/auth.middleware';
       entities: [TodoEntity, UserEntity],
     }),
     TypeOrmModule.forFeature([TodoEntity, UserEntity]),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
   ],
   controllers: [AppController, TodoController, AuthController],
   providers: [TodoService, UserService],
